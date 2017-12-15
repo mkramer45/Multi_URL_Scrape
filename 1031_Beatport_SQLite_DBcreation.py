@@ -5,7 +5,9 @@ import sqlite3
 
 my_url = ['https://www.beatport.com/genre/tech-house/11/top-100', 'https://www.beatport.com/genre/techno/6/top-100']
 # opening up connecting, grabbing the page
-uClient = uReq(my_url)
+
+for url in my_url:
+	uClient = uReq(url)
 # this will offload our content into a variable
 page_html = uClient.read()
 # closes our client
@@ -18,7 +20,7 @@ containers = page_soup.findAll("li",{"class":"bucket-item ec-item track"})
 
 conn = sqlite3.connect('Beatscrape.db')
 cursor = conn.cursor()
-cursor.execute('CREATE TABLE IF NOT EXISTS BeatPortTechHouse(Artist TEXT, Song TEXT, Label TEXT, Price DECIMAL)')
+cursor.execute('CREATE TABLE IF NOT EXISTS BeatportTracks(Artist TEXT, Song TEXT, Label TEXT, Price DECIMAL, CharPosition TEXT, Genre TEXT)')
 
 
 # MSK, artist name
@@ -36,7 +38,7 @@ for container in containers:
 
 	song_Genre = container["data-ec-d3"]
 
-	cursor.execute("INSERT INTO BeatPortTechHouse VALUES (?, ?, ?, ?, ?, ?)", (artistName, song_Name, label_Name, price_Amount, chart_position, song_Genre))
+	cursor.execute("INSERT INTO BeatportTracks VALUES (?, ?, ?, ?, ?, ?)", (artistName, song_Name, label_Name, price_Amount, chart_position, song_Genre))
 
 
 cursor.execute('CREATE TABLE IF NOT EXISTS ArtistMonitor(id INTEGER PRIMARY KEY AUTOINCREMENT, DJname TEXT)')
